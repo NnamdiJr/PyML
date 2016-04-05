@@ -21,6 +21,9 @@ def rbf_kernel_pca(X, gamma, n_components):
     ----------
     X_pc: {NumPy ndarry}, shape = [n_samples, k_features]
       Projected dataset
+
+    lambdas: list
+      Eigenvalues
     """
     #Calculate pairwise squared Euclidean distance in the MxN dimensional dataset
     sq_dist = pdist(X, 'sqeuclidean')
@@ -39,6 +42,10 @@ def rbf_kernel_pca(X, gamma, n_components):
     #Obtaining eigenpairs from the centered kernel matrix numpy.eigh returns them in sorted order
     eigvals, eigvecs = eigh(K)
 
-    #Colllect the top k eigenvectors (projected samples)
-    X_pc  = np.column_stack((eigvecs[:, -i] for i in range(1, n_components + 1)))
-    return X_pc
+    #Collect the top k eigenvectors (projected samples)
+    alphas  = np.column_stack((eigvecs[:, -i] for i in range(1, n_components + 1)))
+
+    #Collect the corresponding eigenvalues
+    lambdas = [eigvals[-i] for i in range(1, n_components+1)]
+
+    return alphas, lambdas
